@@ -36,8 +36,7 @@ npm install PATH_TO_GENERATED_PACKAGE --save
 
 ### Usage
 
-Below code snippet shows exemplary usage of the configuration and the API based 
-on the typical `PetStore` example used for OpenAPI. 
+Below code snippet shows exemplary usage of the configuration and the API.
 
 ```
 import { AccessManagementApi, ServerConfiguration, createConfiguration } from "metronome-ts-client";
