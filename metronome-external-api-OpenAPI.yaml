@@ -1,0 +1,1342 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Metronome API
+  description: ''
+  contact:
+    email: info@privatedataservices.com
+servers:
+  - description: An example of your API url.
+    url: https://YOUR-CUSTOMER-ID.api.eu-north-1.privatedataservices.com/
+tags:
+  - name: access-management
+    description: Signup a customer or change API keys
+  - name: policy-management
+    description: Named data access policies with data aging settings
+  - name: item-access
+    description: Read and write PII data using named data access policies
+  - name: telemetry
+    description: Send item and sub-item access notifications
+  - name: data-expiry
+    description: Metadata regarding when items and subitems expire
+paths:
+  /v1/metronome/sign-up:
+    put:
+      tags:
+        - access-management
+      description: Open end point for signing up new customers
+      operationId: signUp
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+      responses:
+        '200':
+          description: Customer created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SignupResponse'
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '409':
+          description: The requested customer ID is not available
+        '500':
+          description: Server error
+  /v1/metronome/api-keys:
+    get:
+      tags:
+        - access-management
+      description: Read many API keys alphanumerically sorted
+      operationId: getManyApiKeys
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            minimum: 1
+          description: The number of keys to drop from the start
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+          description: The number of keys to include
+        - in: query
+          name: include-data
+          schema:
+            type: boolean
+          description: Whether to include permissions, status, description etc.
+      responses:
+        '200':
+          description: A list of API keys with or without their data
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/ApiKeyListResponse'
+                  - $ref: '#/components/schemas/ApiKeyDataListResponse'
+                discriminator:
+                  propertyName: response-type
+                  mapping:
+                    "ApiKeyListResponse": "#/components/schemas/ApiKeyListResponse"
+                    "ApiKeyDataListResponse": "#/components/schemas/ApiKeyDataListResponse"
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '500':
+          description: Server error
+  /v1/metronome/api-keys/{api-key}:
+    get:
+      tags:
+        - access-management
+      description: Read a specific API key
+      operationId: getApiKey
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: api-key
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: API key data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeyDataResponse'
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '500':
+          description: Server error
+    put:
+      tags:
+        - access-management
+      description: Create or modify an API key
+      operationId: putApiKey
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: api-key
+          description: The API key to be modified or 'create' for a new key
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/CreateApiKeyRequest'
+                - $ref: '#/components/schemas/ModifyApiKeyRequest'
+      responses:
+        '200':
+          description: Create or modify successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrModifyApiKeyResponse'
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '500':
+          description: Server error
+  /v1/metronome/policies:
+    get:
+      tags:
+        - policy-management
+      description: Read many policies alphanumerically sorted
+      operationId: getManyPolicies
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: query
+          name: prefix
+          schema:
+            type: string
+            example: marketing-
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            minimum: 1
+          description: The number of policies to drop from the start
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+          description: The number of policies to include
+        - in: query
+          name: include-data
+          schema:
+            type: boolean
+          description: Whether to include aging-strategy, aging-offset-amount, aging-offset-unit etc.
+      responses:
+        '200':
+          description: A list of policies with or without their data
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/PolicyListResponse'
+                  - $ref: '#/components/schemas/PolicyDataListResponse'
+                discriminator:
+                  propertyName: response-type
+                  mapping:
+                    "PolicyListResponse": "#/components/schemas/PolicyListResponse"
+                    "PolicyDataListResponse": "#/components/schemas/PolicyDataListResponse"
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '500':
+          description: Server error
+  /v1/metronome/policies/{policy-id}:
+    get:
+      tags:
+        - policy-management
+      description: Read a specific policy
+      operationId: getPolicy
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: policy-id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Policy data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyDataResponse'
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '500':
+          description: Server error
+    put:
+      tags:
+        - policy-management
+      description: Create or modify a policy
+      operationId: putPolicy
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: policy-id
+          description: The name of the policy to be created
+          schema:
+            type: string
+          required: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrModifyPolicyRequest'
+      responses:
+        '200':
+          description: Create or modify successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateOrModifyPolicyResponse'
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '500':
+          description: Server error
+  /v1/metronome/policies/{policy-id}/log:
+    get:
+      tags:
+        - policy-management
+      description: Read a specific policy's access log
+      operationId: getPolicyLog
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: policy-id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Policy data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyDataResponse'
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '500':
+          description: Server error
+  /v1/metronome/policies/{policy-id}/members:
+    get:
+      tags:
+        - policy-management
+      description: Read the items and sub-items that have been used for a specific policy
+      operationId: getPolicyMembers
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: policy-id
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Policy data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PolicyDataResponse'
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '500':
+          description: Server error
+  /v1/metronome/items/{item-id}:
+    get:
+      tags:
+        - item-access
+      description: Read a specific item's metadata with or without any sub-items.
+      operationId: getItemMetadata
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: item-id
+          description: The ID of the item to be read
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: all-sub-items
+          schema:
+            type: boolean
+          description: Mutually exclusive with specifying the specific sub-items to read.
+        - in: query
+          name: no-item-content
+          schema:
+            type: boolean
+        - in: query
+          name: sub-item
+          schema:
+            type: array
+            items:
+              type: string
+          style: form
+          explode: true
+          description: Mutually exclusive with all-sub-items=true.  If you only wish to read a few specific sub-items with this item, include each sub-item name in multiple form parameters eg https://url/v1/metronome/items/customer-123?sub-item=email&sub-item=mobile-phone&sub-item=address
+      responses:
+        '200':
+          description: Item data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemMetadataResponse'
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '500':
+          description: Server error
+    delete:
+      tags:
+        - item-access
+      description: Expire an item and its sub-items immediately
+      operationId: expireItem
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: item-id
+          description: The ID of the item being expired
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Item expired successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpireItemResponse'
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '404':
+          description: Item does not exist or has already expired
+        '500':
+          description: Server error
+
+  /v1/metronome/items/{item-id}/log:
+    get:
+      tags:
+        - item-access
+      description: Read a specific item's access log
+      operationId: getItemLog
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: item-id
+          description: The ID of the item to be read
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: start-date
+          schema:
+            type: boolean
+          description: Mutually exclusive with specifying the specific sub-items to read.
+        - in: query
+          name: end-date
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Item access log
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemOrSubItemAccessLog'
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '500':
+          description: Server error
+  /v1/metronome/items/{item-id}/policies:
+    get:
+      tags:
+        - item-access
+      description: Read which policies have been applied to a specific item
+      operationId: getItemPolicies
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: item-id
+          description: The ID of the item to be read
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Item policies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemOrSubItemPolicyResponse'
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '500':
+          description: Server error
+  /v1/metronome/items/{item-id}/{sub-item-id}:
+    get:
+      tags:
+        - item-access
+      description: Read a specific sub-item's metadata
+      operationId: getSubItemMetadata
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: item-id
+          description: The parent item ID of the sub-item being read
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: sub-item-id
+          description: The sub-item ID to be read
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Sub-item metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SubItemMetadataResponse'
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '404':
+          description: Item does not exist or has already expired
+        '500':
+          description: Server error
+    delete:
+      tags:
+        - item-access
+      description: Expire a sub-item immediately
+      operationId: expireSubItem
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: item-id
+          description: The parent item ID of the sub-item being expired
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: sub-item-id
+          description: The sub-item ID being expired
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Sub-item expired successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpireSubItemResponse'
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '404':
+          description: Sub-item does not exist or has already expired
+        '500':
+          description: Server error
+  /v1/metronome/items/{item-id}/{sub-item-id}/log:
+    get:
+      tags:
+        - item-access
+      description: Read a specific sub-item's access log
+      operationId: getSubItemLog
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: item-id
+          description: The parent item ID of the sub-item being read
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: sub-item-id
+          description: The sub-item ID to be read
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Sub-item access log
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemOrSubItemAccessLog'
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '404':
+          description: Item does not exist or has already expired
+        '500':
+          description: Server error
+  /v1/metronome/items/{item-id}/{sub-item-id}/policies:
+    get:
+      tags:
+        - item-access
+      description: Read which policies have been applied to a specific sub-item
+      operationId: getSubItemPolicies
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: item-id
+          description: The parent item ID of the sub-item being read
+          schema:
+            type: string
+          required: true
+        - in: path
+          name: sub-item-id
+          description: The sub-item ID to be read
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Sub-item policies
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemOrSubItemPolicyResponse'
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '404':
+          description: Item does not exist or has already expired
+        '500':
+          description: Server error
+  /v1/metronome/telemetry:
+    post:
+      tags:
+        - telemetry
+      description: Read items and sub-items that will or have already been expired on the given date
+      operationId: postTelemetry
+      security:
+        - ApiKeyAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TelemetryRequest'
+      responses:
+        '200':
+          description: All observations processed
+        '202':
+          description: Some observations processed now, some are delayed but will be processed
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '500':
+          description: Server error
+  /v1/metronome/expiry-notices/{date}:
+    get:
+      tags:
+        - data-expiry
+      description: Read items and sub-items that will or have already been expired on the given date
+      operationId: getExpiryNotices
+      security:
+        - ApiKeyAuth: []
+      parameters:
+        - in: path
+          name: date
+          description: The date to query
+          schema:
+            $ref: '#/components/schemas/DateYYYYMMDD'
+          required: true
+      responses:
+        '200':
+          description: Items and sub-items that will expire in the future or have expired in the past
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExpiryResponse'
+        '400':
+          description: Input data validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '403':
+          description: Permission denied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PermissionDeniedResponse'
+        '500':
+          description: Server error
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+  schemas:
+    SignupRequest:
+      type: object
+      required:
+        - internal-contact
+      properties:
+        internal-contact:
+          type: string
+          example: data-protection-it-manager@yourdomain.com
+      description: Put request body when signing up a new customer
+    SignupResponse:
+      type: object
+      required:
+        - dev-api-url
+        - dev-master-api-key
+        - production-api-url
+        - production-master-api-key
+      properties:
+        dev-api-url:
+          type: string
+          example: https://your-customer-id.dev-api.eu-north-1.tantalus.privatedataservices.com
+        dev-master-api-key:
+          type: string
+          example: abcdefgh1234567
+        production-api-url:
+          type: string
+          example: https://your-customer-id.api.eu-north-1.tantalus.privatedataservices.com
+        production-master-api-key:
+          type: string
+          example: abcdefgh1234567
+    ValidationProblem:
+      type: object
+      required:
+        - location
+        - val
+        - description
+      properties:
+        location:
+          type: array
+          items:
+            type: string
+          example: ["HTTP body", "policies", "value"]
+        val:
+          type: string
+          example: The value you sent to the API
+        description:
+          type: string
+          example: Internal contact must be a non-null string
+    ValidationErrorResponse:
+      type: array
+      items:
+        type: object
+        required:
+          - spec
+          - request-from-customer
+          - problems
+        properties:
+          spec:
+            type: string
+            example: com.pds.tantalus.customers/internal-contact
+          request-from-customer:
+            type: object
+            example: The outermost object that you sent in your request
+          problems:
+            type: array
+            items:
+              $ref: '#/components/schemas/ValidationProblem'
+    Permission:
+      type: string
+      enum: ["api-key-write", "api-key-read", "policy-read", "policy-write", "item-read", "telemetry-write", "expiry-notice-read"]
+    PermissionList:
+      type: array
+      items:
+        $ref: '#/components/schemas/Permission'
+    PermissionDeniedResponse:
+      type: object
+      required:
+        - error-code
+      properties:
+        error-code:
+          type: string
+          enum: ["unknown-customer", "account-restricted", "api-key-lacks-permission"]
+        customer-status:
+          type: string
+          enum: ["read-write", "read-only", "disabled"]
+        api-key-status:
+          type: string
+          enum: ["enabled", "disabled"]
+        granted-permissions:
+          $ref: '#/components/schemas/PermissionList'
+        required-permission:
+          $ref: '#/components/schemas/Permission'
+        internal-contact:
+          type: string
+          example: data-protection-it-manager@yourdomain.com
+        message:
+          type: string
+    ApiKeyListResponse:
+      type: object
+      required:
+        - response-type
+        - result
+      properties:
+        response-type:
+          type: string
+          description: Always the string "ApiKeyListResponse"
+        result:
+          type: array
+          items:
+            type: string
+          example: ["abcdef123445", "lasjdf0923r", "sldkjf2tg4"]
+    ApiKeyData:
+      type: object
+      required:
+        - id
+        - name
+        - description
+        - value
+        - status
+        - permissions
+      properties:
+        id:
+          type: string
+          example: h2h1349
+        name:
+          type: string
+          example: great-flowers-metronome-production-public-website
+        description:
+          type: string
+          example: Customer Great Flowers production Public Website
+        value:
+          type: string
+          example: 9s87v98zxcb987xzcv79xzc7v89x
+        status:
+          type: string
+          enum: ["enabled", "disabled"]
+        permissions:
+          $ref: '#/components/schemas/PermissionList'
+    ApiKeyDataResponse:
+      $ref: '#/components/schemas/ApiKeyData'
+    ApiKeyDataListResponse:
+      type: object
+      required:
+        - response-type
+        - result
+      properties:
+        response-type:
+          type: string
+          description: Always the value "ApiKeyDataListResponse"
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiKeyData'
+    CreateApiKeyRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: public-website
+        description:
+          type: string
+          example: Public Website
+        permissions:
+          $ref: '#/components/schemas/PermissionList'
+    ModifyApiKeyRequest:
+      type: object
+      properties:
+        status:
+          type: string
+          example: disabled
+        permissions:
+          $ref: '#/components/schemas/PermissionList'
+    CreateOrModifyApiKeyResponse:
+      type: object
+      required:
+        - id
+        - value
+        - fields-modified
+      properties:
+        id:
+          type: string
+          example: great-flowers-tantalus-production-public-website
+        value:
+          type: string
+          example: lkj125lkj12l23j41l
+          description: A sequence of alphanumeric characters that contain the value to be used when calling the API
+        fields-modified:
+          type: array
+          items:
+            type: string
+          example: ["name", "description", "permissions"]
+    DateYYYYMMDD:
+      type: string
+      minLength: 8
+      maxLength: 8
+      format: date
+      pattern: '^\d{4}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])$'
+      example: 20190816
+      description: Date in YYYYMMDD format.
+    PolicyList:
+      type: array
+      items:
+        type: string
+      example: ["account-login", "sales-order-processing", "marketing-email"]
+    PolicyListResponse:
+      type: object
+      required:
+        - response-type
+        - count
+        - result
+      properties:
+        response-type:
+          type: string
+          description: Always the value "PolicyListResponse"
+        count:
+          type: integer
+          description: The number of policies with the given prefix.  Count of all policies if no prefix was given.
+        offset:
+          type: integer
+          description: How many items were skipped, specified in the request.
+        limit:
+          type: integer
+          description: The maximum number of items to return, specified in the request.
+        prefix:
+          type: string
+          description: The string prefix to limit policy names, specified in the request.
+        result:
+          $ref: '#/components/schemas/PolicyList'
+    AgingStrategy:
+      type: string
+      enum: ["since-first-read-or-write", "since-last-read-or-write"]
+    AgingOffsetUnit:
+      type: string
+      enum: ["year", "month", "day"]
+    PolicyData:
+      type: object
+      required:
+        - policy-id
+        - create-date
+        - aging-strategy
+        - aging-offset-amount
+        - aging-offset-unit
+      properties:
+        policy-id:
+          type: string
+          example: account-login
+        create-date:
+          $ref: '#/components/schemas/DateYYYYMMDD'
+        aging-strategy:
+          $ref: '#/components/schemas/AgingStrategy'
+        aging-offset-amount:
+          type: integer
+          minimum: 1
+        aging-offset-unit:
+          $ref: '#/components/schemas/AgingOffsetUnit'
+    PolicyDataResponse:
+      $ref: '#/components/schemas/PolicyData'
+    PolicyDataListResponse:
+      type: object
+      required:
+        - response-type
+        - count
+        - result
+      properties:
+        response-type:
+          type: string
+          description: Always the value "PolicyDataListResponse"
+        count:
+          type: integer
+          description: The number of policies with the given prefix.  Count of all policies if no prefix was given.
+        offset:
+          type: integer
+          description: How many items were skipped, specified in the request.
+        limit:
+          type: integer
+          description: The maximum number of items to return, specified in the request.
+        prefix:
+          type: string
+          description: The string prefix to limit policy names, specified in the request.
+        result:
+          type: array
+          items:
+            $ref: '#/components/schemas/PolicyData'
+    CreateOrModifyPolicyRequest:
+      type: object
+      required:
+        - aging-strategy
+        - aging-offset-amount
+        - aging-offset-unit
+      properties:
+        aging-strategy:
+          $ref: '#/components/schemas/AgingStrategy'
+        aging-offset-amount:
+          type: integer
+          minimum: 1
+        aging-offset-unit:
+          $ref: '#/components/schemas/AgingOffsetUnit'
+    CreateOrModifyPolicyResponse:
+      type: object
+      required:
+        - policy-id
+        - fields-updated
+      properties:
+        policy-id:
+          type: string
+          example: account-login
+        fields-updated:
+          type: array
+          items:
+            type: string
+          example: ["aging-offset-amount", "aging-offset-unit"]
+    ItemMetadataResponse:
+      type: object
+      properties:
+        expired:
+          type: boolean
+          description: Present and true only when the item has expired
+        sub-items:
+          type: object
+          additionalProperties: true
+          description: Each requested sub-item with it's own value
+          example: {"email": "person@domain.com", "mobile-phone": "0123456789"}
+        expired-sub-item-ids:
+          type: array
+          items:
+            type: string
+        sub-items-not-present:
+          type: array
+          items:
+            type: string
+        policy-id:
+          type: string
+          description: The policy which currently governs how long this item will be retained
+        expiry-date:
+          allOf:
+            - $ref: '#/components/schemas/DateYYYYMMDD'
+          description: The date at which this item will expire if it is not used again
+    ExpireItemResponse:
+      type: object
+      required:
+        - item-id
+        - sub-items-expired
+      properties:
+        item-id:
+          type: string
+          example: customer-123
+        sub-items-expired:
+          type: array
+          items:
+            type: string
+          example: ["email", "mobile-phone"]
+    AccessType:
+      type: string
+      description: The type of data access that occurred
+      enum: ["read", "write", "expire"]
+    ItemOrSubItemAccessLog:
+      type: object
+      required:
+        - timestamp
+        - access-type
+        - access-authoriser
+        - access-policies
+        - effective-expiry-policy
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        access-type:
+          $ref: '#/components/schemas/AccessType'
+        access-authoriser:
+          type: string
+          description: The ID of the system that accessed the data
+        access-policies:
+          type: array
+          items:
+            type: string
+            description: The reasons for this data access
+        effective-expiry-policy:
+          type: string
+          description: The policy which governed data expiry after this data access
+        effective-expiry-date:
+          allOf:
+            - $ref: '#/components/schemas/DateYYYYMMDD'
+          description: The date to which this item or sub-item would be retained after this access
+        accessed-sub-items:
+          type: array
+          items:
+            type: string
+            description: The sub-items that were accessed
+        expired:
+          type: boolean
+          description: Present and true only when the item expired as a result of this access
+    ItemOrSubItemPolicyResponse:
+      type: object
+      required:
+        - policy-id
+      properties:
+        policy-id:
+          type: string
+          description: A policy that was applied to this item or sub-item
+        expiry-date:
+          allOf:
+            - $ref: '#/components/schemas/DateYYYYMMDD'
+          description: The date at which this item or sub-item should expire according to this policy
+        last-application-date:
+          allOf:
+            - $ref: '#/components/schemas/DateYYYYMMDD'
+          description: The date at which this policy was last applied to this item or sub-item
+    SubItemMetadataResponse:
+      type: object
+      required:
+        - policy-id
+      properties:
+        expired:
+          type: boolean
+          description: Present and true only when the item has expired
+        policy-id:
+          type: string
+          description: The policy which currently governs how long this item will be retained
+        expiry-date:
+          allOf:
+            - $ref: '#/components/schemas/DateYYYYMMDD'
+          description: The date at which this item will expire if it is not used again
+    ExpireSubItemResponse:
+      type: object
+      required:
+        - item-id
+        - sub-item-id
+        - fields-updated
+      properties:
+        item-id:
+          type: string
+          example: customer-123
+        sub-item-id:
+          type: string
+          example: email
+        fields-updated:
+          type: array
+          items:
+            type: string
+          example: ["policies", "expired"]
+    ItemExpiry:
+      type: object
+      required:
+        - expiry-type
+        - item-id
+      properties:
+        expiry-type:
+          type: string
+          description: Always the value "ItemExpiry"
+        item-id:
+          type: string
+          example: customer-123
+    SubItemsExpiry:
+      type: object
+      required:
+        - expiry-type
+        - parent-item-id
+        - sub-items
+      properties:
+        expiry-type:
+          type: string
+          description: Always the value "SubItemsExpiry"
+        parent-item-id:
+          type: string
+          example: customer-123
+        sub-items:
+          type: array
+          items:
+            type: string
+          example: ["email", "mobile-phone"]
+    ExpiryResponse:
+      type: object
+      required:
+        - pending
+        - complete
+      properties:
+        expiry-date:
+          $ref: '#/components/schemas/DateYYYYMMDD'
+        pending:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ItemExpiry'
+              - $ref: '#/components/schemas/SubItemsExpiry'
+            discriminator:
+              propertyName: expiry-type
+              mapping:
+                "ItemExpiry": "#/components/schemas/ItemExpiry"
+                "SubItemsExpiry": "#/components/schemas/SubItemsExpiry"
+        complete:
+          type: array
+          items:
+            oneOf:
+              - $ref: '#/components/schemas/ItemExpiry'
+              - $ref: '#/components/schemas/SubItemsExpiry'
+            discriminator:
+              propertyName: expiry-type
+              mapping:
+                "ItemExpiry": "#/components/schemas/ItemExpiry"
+                "SubItemsExpiry": "#/components/schemas/SubItemsExpiry"
+    TelemetryObservation:
+      type: object
+      required:
+        - item-id
+        - sub-item-ids
+      properties:
+        item-id:
+          type: string
+          example: customer-123
+        sub-item-ids:
+          type: array
+          items:
+            type: string
+          example: ["email", "address"]
+    TelemetryRequest:
+      type: object
+      required:
+        - observation-time
+        - policies
+        - observations
+      properties:
+        observation-time:
+          type: string
+          format: date-time
+          description: The time the observation happened in UTC timezone
+        policies:
+          type: array
+          items:
+            type: string
+          example: ["account-login", "sales-order-processing", "marketing-email"]
+        observations:
+          type: array
+          items:
+            $ref: '#/components/schemas/TelemetryObservation'

@@ -1,4 +1,4 @@
 
 generate-typescript-client:
-	openapi-generator-cli generate -g typescript -i ../tantalus-cljs/doc/metronome-external-api-swagger.yaml -o typescript
+	openapi-generator-cli generate -g typescript -i metronome-external-api-OpenAPI.yaml -o typescript
 
