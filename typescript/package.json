@@ -1,0 +1,43 @@
+{
+  "name": "metronome-ts-client",
+  "version": "0.1",
+  "description": "OpenAPI client for Private Data Services Metronome",
+  "author": "Private Data Services",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GIT_USER_ID/GIT_REPO_ID.git"
+  },
+  "keywords": [
+    "metronome",
+    "gdpr",
+    "hipaa",
+    "compliance",
+    "fetch",
+    "typescript",
+    "openapi-client",
+    "openapi-generator"
+  ],
+  "license": "Microsoft Public License https://opensource.org/license/ms-pl-html/",
+  "main": "./dist/index.js",
+  "types": "./dist.index.d.ts",
+  "type": "commonjs",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "typings": "./dist/index.d.ts",
+  "files": ["README.md", "dist", "package.json"],
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "prepare": "npm run build"
+  },
+  "dependencies": {
+    "whatwg-fetch": "^3.0.0",
+    "es6-promise": "^4.2.4",
+    "url-parse": "^1.4.3"
+  },
+  "devDependencies": {
+    "typescript": "^4.0",
+    "@types/url-parse": "1.4.4"
+  }
+}
