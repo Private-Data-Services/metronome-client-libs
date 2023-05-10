@@ -1,6 +1,6 @@
 {
   "name": "@privatedataservices/metronome",
-  "version": "0.1",
+  "version": "1.0.0",
   "description": "OpenAPI client for Private Data Services Metronome",
   "homepage": "https://privatedataservices.com/",
   "author": "Private Data Services",
