@@ -1,6 +1,6 @@
 
 clean:
-	rm -f metronome-ts-client-*.tgz
+	rm -f *.tgz
 	rm -rf dist/*
 
 package: clean
