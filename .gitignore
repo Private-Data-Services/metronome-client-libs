@@ -1,5 +1,8 @@
 typescript/dist
 typescript/node_modules
 typescript/package-lock.json
-typescript/metronome-ts-client*.tgz
+typescript/*.tgz
 
+typescript-examples/dist
+typescript-examples/node_modules
+typescript-examples/package-lock.json
