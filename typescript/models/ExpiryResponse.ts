@@ -17,7 +17,7 @@ export class ExpiryResponse {
     /**
     * Date in YYYYMMDD format.
     */
-    'expiryDate'?: string;
+    'expiryDate': string;
     'pending': Array<ExpiryResponsePendingInner>;
     'complete': Array<ExpiryResponsePendingInner>;
 

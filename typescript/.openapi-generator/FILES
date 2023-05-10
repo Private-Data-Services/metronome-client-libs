@@ -1,5 +1,4 @@
 .gitignore
-.openapi-generator-ignore
 AccessManagementApi.md
 DataExpiryApi.md
 ItemAccessApi.md

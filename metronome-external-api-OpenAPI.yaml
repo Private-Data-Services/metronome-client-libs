@@ -1279,6 +1279,7 @@ components:
     ExpiryResponse:
       type: object
       required:
+        - expiry-date
         - pending
         - complete
       properties:
