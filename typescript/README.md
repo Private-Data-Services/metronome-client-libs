@@ -25,7 +25,7 @@ Navigate to the folder of your consuming project and run one of the following co
 _published:_
 
 ```
-npm install @ --save
+npm install @privatedataservices/metronome --save
 ```
 
 _unPublished (not recommended):_
@@ -49,5 +49,8 @@ const clientConfig = createConfiguration( {
 const amApiClient = new AccessManagementApi(clientConfig);
 
 // Use the access management client
-const response = await amApiClient.putApiKey("create", {name: "DPO Team Policy Manager", description: "Data Protection Office policy management key", permissions: ["policy-read", "policy-write"]});
+const response = await amApiClient.putApiKey("create", {name: "dpo-team-policy-manager", description: "Data Protection Office policy management key", permissions: ["policy-read", "policy-write"]});
 ```
+
+Extensive examples can be found in the [GitHub repository](https://github.com/Private-Data-Services/metronome-client-libs)
+
