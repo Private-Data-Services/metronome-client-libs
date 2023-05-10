@@ -7,3 +7,6 @@ package: clean
 	npm run build
 	npm pack
 
+publish:
+	npm publish --access public
+
