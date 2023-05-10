@@ -1,7 +1,8 @@
 {
-  "name": "metronome-ts-client",
+  "name": "@privatedataservices/metronome",
   "version": "0.1",
   "description": "OpenAPI client for Private Data Services Metronome",
+  "homepage": "https://privatedataservices.com/",
   "author": "Private Data Services",
   "repository": {
     "type": "git",
