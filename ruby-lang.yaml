@@ -1,0 +1,14 @@
+generatorName: ruby
+outputDir: ruby
+moduleName: Metronome
+gemName: metronome
+gemVersion: 1.0.0
+gemDescription: 'Define Metronome policies, API keys and submit PII telemetry.  Query data expiry notices.'
+gemSummary: 'Track usage of your Personally Identifiable Information (PII) according to policies you define.  Expire PII with confidence once it has served its purpose.'
+gemRequiredRubyVersion: '>= 2.6.0'
+gemLicense: 'MS-PL'
+gemHomepage: 'https://privatedataservices.com'
+gemAuthor: Private Data Services
+gemAuthorEmail: 'info@privatedataservices.com'
+gitUserId: Private-Data-Services
+gitRepoId: metronome-client-libs
