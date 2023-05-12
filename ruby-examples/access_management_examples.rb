@@ -9,7 +9,6 @@ def sign_up_example(client)
     end
 end
 
-
 def create_api_key_example(client)
     begin
         response = client.put_api_key("create", { put_api_key_request: Metronome::CreateApiKeyRequest.new({name: "dpo-team-policy-manager", description: "Data Protection Office policy management key", permissions: ["policy-read", "policy-write"]}) })
@@ -54,7 +53,6 @@ def get_many_api_keys_without_definition_example(client)
         puts "Exception when calling AccessManagementApi->get_many_api_keys: #{e}"
     end
 end
-
 
 def get_many_api_keys_with_definition_example(client)
     begin
