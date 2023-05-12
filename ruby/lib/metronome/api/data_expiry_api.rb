@@ -40,21 +40,30 @@ module Metronome
       if @api_client.config.client_side_validation && date.nil?
         fail ArgumentError, "Missing the required parameter 'date' when calling DataExpiryApi.get_expiry_notices"
       end
-      if @api_client.config.client_side_validation && date.to_s.length > 8
-        fail ArgumentError, 'invalid value for "date" when calling DataExpiryApi.get_expiry_notices, the character length must be smaller than or equal to 8.'
-      end
 
-      if @api_client.config.client_side_validation && date.to_s.length < 8
-        fail ArgumentError, 'invalid value for "date" when calling DataExpiryApi.get_expiry_notices, the character length must be great than or equal to 8.'
-      end
+      # PDS patch: if this is already converted to a date object, just use the date.
+      date_string = nil
+      if date.is_a?(Date)
+        date_string = date.strftime("%Y%m%d")
+      else
+        if @api_client.config.client_side_validation && date.to_s.length > 8
+          fail ArgumentError, 'invalid value for "date" when calling DataExpiryApi.get_expiry_notices, the character length must be smaller than or equal to 8.'
+        end
 
-      pattern = Regexp.new(/^\d{4}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])$/)
-      if @api_client.config.client_side_validation && date !~ pattern
-        fail ArgumentError, "invalid value for 'date' when calling DataExpiryApi.get_expiry_notices, must conform to the pattern #{pattern}."
+        if @api_client.config.client_side_validation && date.to_s.length < 8
+          fail ArgumentError, 'invalid value for "date" when calling DataExpiryApi.get_expiry_notices, the character length must be great than or equal to 8.'
+        end
+
+        pattern = Regexp.new(/^\d{4}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])$/)
+        if @api_client.config.client_side_validation && date !~ pattern
+          fail ArgumentError, "invalid value for 'date' when calling DataExpiryApi.get_expiry_notices, must conform to the pattern #{pattern}."
+        end
+
+        date_string = date
       end
 
       # resource path
-      local_var_path = '/v1/metronome/expiry-notices/{date}'.sub('{' + 'date' + '}', CGI.escape(date.to_s))
+      local_var_path = '/v1/metronome/expiry-notices/{date}'.sub('{' + 'date' + '}', CGI.escape(date_string))  # PDS patch
 
       # query parameters
       query_params = opts[:query_params] || {}

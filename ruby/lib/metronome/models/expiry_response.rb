@@ -134,17 +134,20 @@ module Metronome
         fail ArgumentError, 'expiry_date cannot be nil'
       end
 
-      if expiry_date.to_s.length > 8
-        fail ArgumentError, 'invalid value for "expiry_date", the character length must be smaller than or equal to 8.'
-      end
+      # PDS patch: if this is already converted to a date object, just use the date. 
+      if not expiry_date.is_a?(Date)
+        if expiry_date.to_s.length > 8
+          fail ArgumentError, 'invalid value for "expiry_date", the character length must be smaller than or equal to 8.'
+        end
 
-      if expiry_date.to_s.length < 8
-        fail ArgumentError, 'invalid value for "expiry_date", the character length must be great than or equal to 8.'
-      end
+        if expiry_date.to_s.length < 8
+          fail ArgumentError, 'invalid value for "expiry_date", the character length must be great than or equal to 8.'
+        end
 
-      pattern = Regexp.new(/^\d{4}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])$/)
-      if expiry_date !~ pattern
-        fail ArgumentError, "invalid value for \"expiry_date\", must conform to the pattern #{pattern}."
+        pattern = Regexp.new(/^\d{4}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])$/)
+        if expiry_date !~ pattern
+          fail ArgumentError, "invalid value for \"expiry_date\", must conform to the pattern #{pattern}."
+        end
       end
 
       @expiry_date = expiry_date
