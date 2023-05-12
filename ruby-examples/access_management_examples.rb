@@ -3,7 +3,7 @@ require 'metronome'
 def sign_up_example(client)
     begin
         response = client.sign_up({ signup_request: Metronome::SignupRequest.new({internal_contact: 'dpo-team@privatedataservices.com'}) })
-        puts "Sign up successful: #{response}"
+        puts "Sign up successful.  Master key for the development instance is #{response.dev_master_api_key} and for the production instance is #{response.production_master_api_key}"
     rescue Metronome::ApiError => e
         puts "Exception when calling AccessManagementApi->sign_up: #{e}"
     end
