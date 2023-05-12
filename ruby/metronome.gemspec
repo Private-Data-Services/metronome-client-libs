@@ -16,7 +16,7 @@ $:.push File.expand_path("../lib", __FILE__)
 require "metronome/version"
 
 Gem::Specification.new do |s|
-  s.name        = "metronome"
+  s.name        = "pds-metronome"
   s.version     = Metronome::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Private Data Services"]
