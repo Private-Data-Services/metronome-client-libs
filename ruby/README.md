@@ -24,7 +24,7 @@ or add this to your Gemfile:
 gem 'metronome', '~> 1.0.0'
 ```
 
-### Build a gem
+### Build this gem
 
 To build the Ruby code into a gem:
 
@@ -38,7 +38,7 @@ Then either install the gem locally:
 
 or publish the gem to a gem hosting service, e.g. [RubyGems](https://rubygems.org/).
 
-Finally add this to the Gemfile:
+Finally add this to a Gemfile for a project that depends on this gem:
 
     gem 'metronome', '~> 1.0.0'
 
@@ -57,6 +57,8 @@ ruby -Ilib script.rb
 ```
 
 ## Getting Started
+
+Examples are available in [the ruby client examples folder](https://github.com/Private-Data-Services/metronome-client-libs/tree/main/ruby-examples)
 
 Please follow the [installation](#installation) procedure and then run the following code:
 
