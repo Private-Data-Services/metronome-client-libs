@@ -72,7 +72,7 @@ Metronome.configure do |config|
     config.api_key['ApiKeyAuth'] = ENV["METRONOME_API_KEY"]    # Omit this setting for sign up.
     config.customer_id = "pds-internal-code-examples"
     config.region = "eu-north-1"
-    config.use_production_instance = false      # Use your dev instance
+    config.use_production_instance = false      # Use your dev instance unless you are signing up.
 end
 
 am_api_client = Metronome::AccessManagementApi.new
