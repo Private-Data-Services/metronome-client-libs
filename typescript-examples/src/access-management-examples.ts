@@ -16,7 +16,7 @@ const signUpExample = async () => {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const clientConfig = createConfiguration( {
-    baseServer: new ServerConfiguration("pds-internal-code-examples", "eu-north-1", {}, true),
+    baseServer: new ServerConfiguration("pds-internal-code-examples", "eu-north-1", {}, false),
     authMethods: { ApiKeyAuth: process.env.METRONOME_API_KEY }
 });
 const amApiClient = new AccessManagementApi(clientConfig);

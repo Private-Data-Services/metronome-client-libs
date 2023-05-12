@@ -1,7 +1,7 @@
 import { DataExpiryApi, ServerConfiguration, createConfiguration } from "@privatedataservices/metronome";
 
 const clientConfig = createConfiguration( {
-    baseServer: new ServerConfiguration("pds-internal-code-examples", "eu-north-1", {}, true),
+    baseServer: new ServerConfiguration("pds-internal-code-examples", "eu-north-1", {}, false),
     authMethods: { ApiKeyAuth: process.env.METRONOME_API_KEY }
 });
 const expiryApiClient = new DataExpiryApi(clientConfig);
