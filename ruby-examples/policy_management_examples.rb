@@ -65,6 +65,7 @@ Metronome.configure do |config|
     config.api_key['ApiKeyAuth'] = ENV["METRONOME_API_KEY"]
     config.customer_id = "pds-internal-code-examples"
     config.region = "eu-north-1"
+    config.use_production_instance = false      # Use your dev instance
 end
 
 pm_api_client = Metronome::PolicyManagementApi.new
