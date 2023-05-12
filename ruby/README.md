@@ -87,7 +87,8 @@ end
 
 ## Documentation for API Endpoints
 
-All URIs are relative to *https://YOUR-CUSTOMER-ID.api.eu-north-1.privatedataservices.com*
+All URIs are relative to *https://YOUR-CUSTOMER-ID.api.REGION.privatedataservices.com*  You should only need to use or know this value when you use the REST API directly.
+The server name is handled by this client automatically.
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
