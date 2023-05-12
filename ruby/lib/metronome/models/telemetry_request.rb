@@ -245,6 +245,8 @@ module Metronome
         {}.tap do |hash|
           value.each { |k, v| hash[k] = _to_hash(v) }
         end
+      elsif value.is_a?(Time)                   #PDS patch: time must be specifically formatted.
+        value.strftime("%Y-%m-%dT%H:%M:%S%:z")
       elsif value.respond_to? :to_hash
         value.to_hash
       else
