@@ -183,20 +183,25 @@ module Metronome
         fail ArgumentError, 'create_date cannot be nil'
       end
 
-      if create_date.to_s.length > 8
-        fail ArgumentError, 'invalid value for "create_date", the character length must be smaller than or equal to 8.'
-      end
+      # PDS patch: if this is already converted to a date object, just use the date.
+      if create_date.is_a?(Date)
+        @create_date = create_date
+      else
+        if create_date.to_s.length > 8
+          fail ArgumentError, 'invalid value for "create_date", the character length must be smaller than or equal to 8.'
+        end
 
-      if create_date.to_s.length < 8
-        fail ArgumentError, 'invalid value for "create_date", the character length must be great than or equal to 8.'
-      end
+        if create_date.to_s.length < 8
+          fail ArgumentError, 'invalid value for "create_date", the character length must be great than or equal to 8.'
+        end
 
-      pattern = Regexp.new(/^\d{4}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])$/)
-      if create_date !~ pattern
-        fail ArgumentError, "invalid value for \"create_date\", must conform to the pattern #{pattern}."
-      end
+        pattern = Regexp.new(/^\d{4}(0[1-9]|1[012])(0[1-9]|[12][0-9]|3[01])$/)
+        if create_date !~ pattern
+          fail ArgumentError, "invalid value for \"create_date\", must conform to the pattern #{pattern}."
+        end
 
-      @create_date = create_date
+        @create_date = create_date
+      end
     end
 
     # Custom attribute writer method with validation

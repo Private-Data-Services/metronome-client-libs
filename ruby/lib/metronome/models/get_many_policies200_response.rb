@@ -26,7 +26,7 @@ module Metronome
 
       # Discriminator's property name (OpenAPI v3)
       def openapi_discriminator_name
-        :'response_type'
+        :'response-type'   # PDS patch: generated with underscore but needs a dash which is what the data contains
       end
 
       # Discriminator's mapping (OpenAPI v3)
