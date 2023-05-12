@@ -74,6 +74,6 @@ Metronome.configure do |config|
     config.region = "eu-north-1"
 end
 
-amApiClient = Metronome::AccessManagementApi.new
+am_api_client = Metronome::AccessManagementApi.new
 
-get_many_api_keys_with_definition_example(amApiClient)
+get_many_api_keys_with_definition_example(am_api_client)

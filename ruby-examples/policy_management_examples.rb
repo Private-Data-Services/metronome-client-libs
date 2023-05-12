@@ -23,7 +23,7 @@ def get_policy_example(client)
         policy = client.get_policy("user-account-access")
         puts "Policy ID is #{policy.policy_id} created at #{policy.create_date} with aging strategy #{policy.aging_strategy} which ages by #{policy.aging_offset_amount} units of #{policy.aging_offset_unit}"
     rescue Metronome::ApiError => e
-    puts "Exception when calling PolicyManagementApi->put_policy: #{e}"
+    puts "Exception when calling PolicyManagementApi->get_policy: #{e}"
     end
 end
 
@@ -32,7 +32,7 @@ def get_many_policies_example(client)
         response = client.get_many_policies
         puts "There are #{response.result.length} policies which are #{response.result}"
     rescue Metronome::ApiError => e
-    puts "Exception when calling PolicyManagementApi->put_policy: #{e}"
+    puts "Exception when calling PolicyManagementApi->get_many_policies: #{e}"
     end
 end
 
@@ -44,7 +44,7 @@ def get_many_policy_definitions_no_filter_example(client)
             puts "Policy ID is #{policy.policy_id} created at #{policy.create_date} with aging strategy #{policy.aging_strategy} which ages by #{policy.aging_offset_amount} units of #{policy.aging_offset_unit}"
         end
     rescue Metronome::ApiError => e
-    puts "Exception when calling PolicyManagementApi->put_policy: #{e}"
+    puts "Exception when calling PolicyManagementApi->get_many_policies: #{e}"
     end
 end
 
@@ -56,7 +56,7 @@ def get_many_policy_definitions_with_filter_example(client)
             puts "Policy ID is #{policy.policy_id} created at #{policy.create_date} with aging strategy #{policy.aging_strategy} which ages by #{policy.aging_offset_amount} units of #{policy.aging_offset_unit}"
         end
     rescue Metronome::ApiError => e
-    puts "Exception when calling PolicyManagementApi->put_policy: #{e}"
+    puts "Exception when calling PolicyManagementApi->get_many_policies: #{e}"
     end
 end
 
@@ -67,6 +67,6 @@ Metronome.configure do |config|
     config.region = "eu-north-1"
 end
 
-pmApiClient = Metronome::PolicyManagementApi.new
+pm_api_client = Metronome::PolicyManagementApi.new
 
-get_many_policy_definitions_no_filter_example(pmApiClient)
+get_many_policy_definitions_no_filter_example(pm_api_client)

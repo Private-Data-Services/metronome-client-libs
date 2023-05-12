@@ -10,7 +10,7 @@ def post_telemetry_example(client)
         client.post_telemetry({telemetry_request: telemetry})
         puts "Telemetry posted successfully"
     rescue Metronome::ApiError => e
-    puts "Exception when calling PolicyManagementApi->put_policy: #{e}"
+    puts "Exception when calling TelemetryApi->post_telemetry: #{e}"
     end
 end
 
@@ -21,6 +21,6 @@ Metronome.configure do |config|
     config.region = "eu-north-1"
 end
 
-telemetryApiClient = Metronome::TelemetryApi.new
+telemetry_api_client = Metronome::TelemetryApi.new
 
-post_telemetry_example(telemetryApiClient)
+post_telemetry_example(telemetry_api_client)
